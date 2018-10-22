@@ -37,26 +37,23 @@ int calculateNextRow(int currentRow[], int rule[], int rowSize) {
 
 int main() {
 
-	int currentRow[40];
+	int row[40];
 	int rowSize = 40;
 
 	for (int i=0; i<rowSize; i++)
-		currentRow[i] = 0;
+		row[i] = 0;
 
-	currentRow[20] = 1;
+	row[20] = 1;
 
 	int rule[] = {0,1,0,1,1,0,1,1};
-	int rule2[] = {0,1,1,1,0,0,1,1};
 	//            1 2 4 8 16 32 64 128
 
-	printRow(currentRow, 16);
+	printRow(row, rowSize);
 	printf("\n");
 
-	for (int i=0; i<100000; i++) {
-		calculateNextRow(currentRow, rule, rowSize);
-		printRow(currentRow, rowSize);
-		calculateNextRow(currentRow, rule2, rowSize);
-		printRow(currentRow, rowSize);
+	for (int i=0; i<100; i++) {
+		calculateNextRow(row, rule, rowSize);
+		printRow(row, rowSize);
 		printf("\n");
 	}
 	
