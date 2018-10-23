@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 
 int  printRow(int row[], int rowSize) {
@@ -62,7 +63,17 @@ int* decimalToBinary(int decimal) {
     return binary;
 }
 
-int rnd() {
+int binaryToDecimal(int rule[]) {
+	int decimal = 0;
+
+	for (int i = 0; i < 8; i++) {
+		decimal += rule[i] * ((int)pow(2, i));	
+	}
+
+	return decimal;
+}
+
+int rnd(void) {
 	int random;
 	int max = 255;
 	time_t t;
@@ -73,11 +84,10 @@ int rnd() {
 	return random;
 }
 
-int main() {
-
+int main(void) {
 	int *rule;
-	p = decimalToBinary(rnd());
-
+	rule = decimalToBinary(rnd());
+	
 	int row[40];
 	int rowSize = 40;
 
@@ -97,6 +107,9 @@ int main() {
 		printRow(row, rowSize);
 		printf("\n");
 	}
+
+	printf("Rule: %d", binaryToDecimal(rule));
+	printf("\n");
 	
 }
 
