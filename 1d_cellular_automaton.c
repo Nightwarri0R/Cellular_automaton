@@ -2,9 +2,38 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "1dca.h"
 
+int main(void) {
+	int *rule;
+	int row[40];
+	int rowSize = 40;
 
-int  printRow(int row[], int rowSize) {
+	for (int i=0; i<rowSize; i++)
+		row[i] = 0;
+
+	row[20] = 1;
+
+	//int rule[] = {0,1,1,1,1,0,0,0};
+	//            1 2 4 8 16 32 64 128
+
+	printRow(row, rowSize);
+	printf("\n");
+
+	rule = decimalToBinary(rnd());
+
+	for (int i=0; i<100; i++) {
+		calculateNextRow(row, rule, rowSize);
+		printRow(row, rowSize);
+		printf("\n");
+	}
+
+	printf("Rule: %d", binaryToDecimal(rule));
+	printf("\n");
+	
+}
+
+int printRow(int row[], int rowSize) {
 	for (int i=0; i<rowSize; i++)
 		if (row[i] == 1)
 			printf("\u2588");
@@ -83,36 +112,6 @@ int rnd(void) {
 
 	return random;
 }
-
-int main(void) {
-	int *rule;
-	rule = decimalToBinary(rnd());
-	
-	int row[40];
-	int rowSize = 40;
-
-	for (int i=0; i<rowSize; i++)
-		row[i] = 0;
-
-	row[20] = 1;
-
-	//int rule[] = {0,1,1,1,1,0,0,0};
-	//            1 2 4 8 16 32 64 128
-
-	printRow(row, rowSize);
-	printf("\n");
-
-	for (int i=0; i<100; i++) {
-		calculateNextRow(row, rule, rowSize);
-		printRow(row, rowSize);
-		printf("\n");
-	}
-
-	printf("Rule: %d", binaryToDecimal(rule));
-	printf("\n");
-	
-}
-
 
 
 
