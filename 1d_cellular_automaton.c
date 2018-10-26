@@ -9,6 +9,7 @@
 #define LENGTH 100
 
 int main(void) {
+	
 	int *rule;
 	int row[LENGTH];
 	int rowSize = LENGTH;
@@ -21,6 +22,9 @@ int main(void) {
 	rule = decimalToBinary(rnd());
 	generate(row, rowSize, rule);
 	ruleInfomation(rule);
+	
+
+
 }
 
 int calculateCell(int lastRowLeft, int lastRowCentre, int lastRowRight, int rule[]) {
@@ -48,20 +52,31 @@ void calculateNextRow(int currentRow[], int rule[], int rowSize) {
 }
 
 void paintRow(int row[], int rowSize) {
+
+		
 	// prints a white block if the arr contains 1. blank for 0
-	for (int i=0; i<rowSize; i++)
-		if (row[i] == 1)
+	for (int i=0; i<rowSize; i++){
+		if(row[i] == 1){
 			printf("\u2588");
-		else
+	}else{
 			printf(" ");
+		}
+	}
 }
+		
 
 void generate(int row[], int rowSize, int rule[]) {
+
 	for (int i = 0; i < MAX_GEN; i++) {
 		paintRow(row, rowSize);
 		calculateNextRow(row, rule, rowSize);
 		printf("\n");
+		saveTotxt(row,rowSize);
+
 	}
+
+
+
 }
 
 void ruleInfomation(int rule[]) {
@@ -125,3 +140,33 @@ int rnd(void) {
 
 	return random;
 }
+
+void  saveTotxt(int row[], int rowSize) {
+
+		FILE *f = fopen("cellular.txt", "a");
+
+			if(f==NULL){
+	printf("\n File cannot be opened");
+
+	 exit(1);
+	}
+
+	// prints a white block if the arr contains 1. blank for 0
+	for (int i=0; i<rowSize; i++){
+
+		if(row[i] == 1) {
+
+			fprintf(f, "\u2588");
+	}else{
+
+			fprintf(f," ");
+			
+		}
+	}
+	fprintf(f,"\n");
+	fclose(f);
+}
+		
+
+
+
