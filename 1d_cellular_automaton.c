@@ -5,53 +5,22 @@
 #include <string.h>
 #include "1dca.h"
 
+#define MAX_GEN 250
+#define LENGTH 100
+
 int main(void) {
 	int *rule;
-	int row[40];
-	int rowSize = 40;
+	int row[LENGTH];
+	int rowSize = LENGTH;
 
 	for (int i=0; i<rowSize; i++)
 		row[i] = 0;
 
-	row[20] = 1;
+	row[rowSize/2] = 1;
 
-	//int rule[] = {0,1,1,1,1,0,0,0};
-	//            1 2 4 8 16 32 64 128
-
-	
-
-	int input;
-	printf("Rule: ");
-	scanf("%d", &input);
-	rule = decimalToBinary(input);
-	printRow(row, rowSize);
-	printf("\n");
-	//rule = decimalToBinary(rnd());
-
-	for (int i=0; i<100; i++) {
-		calculateNextRow(row, rule, rowSize);
-		printRow(row, rowSize);
-		printf("\n");
-	}
-
-	/*
-	CHECK
-	*/
-	printf("\n_____________________________________");
-	printf("                                        ");
-	printf("\nRule: %d", binaryToDecimal(rule));
-	printf("\n");
-	printf("2^n:     1  2  4  8 16 32 64 128");
-	printf("\n");
-	printf("Binary: ");
-	for (int i = 0; i < 8; i++) {
-		printf(" %d ", *(rule + i));
-	}
-	printf("\n_____________________________________");
-	printf("\n");
-	
-	/*
-	*/
+	rule = decimalToBinary(rnd());
+	generate(row, rowSize, rule);
+	ruleInfomation(rule);
 }
 
 int calculateCell(int lastRowLeft, int lastRowCentre, int lastRowRight, int rule[]) {
@@ -64,7 +33,6 @@ int calculateCell(int lastRowLeft, int lastRowCentre, int lastRowRight, int rule
 }
 
 void calculateNextRow(int currentRow[], int rule[], int rowSize) {
-
 	int nextRow[rowSize];
 	// wrap around when the at the 0th position in the nextRow
 	nextRow[0] = calculateCell(currentRow[rowSize-1], currentRow[0], currentRow[1], rule);
@@ -77,16 +45,40 @@ void calculateNextRow(int currentRow[], int rule[], int rowSize) {
 
 	// copy the memory of nextRow array to the currentRow array using the memcpy function from <string.h> library
 	memcpy(currentRow, nextRow, sizeof(nextRow));
-
 }
 
-void printRow(int row[], int rowSize) {
+void paintRow(int row[], int rowSize) {
 	// prints a white block if the arr contains 1. blank for 0
 	for (int i=0; i<rowSize; i++)
 		if (row[i] == 1)
 			printf("\u2588");
 		else
 			printf(" ");
+}
+
+void generate(int row[], int rowSize, int rule[]) {
+	for (int i = 0; i < MAX_GEN; i++) {
+		paintRow(row, rowSize);
+		calculateNextRow(row, rule, rowSize);
+		printf("\n");
+	}
+}
+
+void ruleInfomation(int rule[]) {
+	printf("\n_____________________________________");
+	printf("\n                                        ");
+	printf("\nRule: %d", binaryToDecimal(rule));
+	printf("\n");
+	printf("2^n:     1  2  4  8 16 32 64 128");
+	printf("\n");
+	printf("Binary: ");
+	for (int i = 0; i < 8; i++) {
+		printf(" %d ", *(rule + i));
+	}
+	printf("\nGenerations: %d", MAX_GEN);
+	printf("\nRow Length: %d", LENGTH);
+	printf("\n_____________________________________");
+	printf("\n");
 }
 
 int* decimalToBinary(int decimal) { 
@@ -105,7 +97,6 @@ int* decimalToBinary(int decimal) {
         binary[bit] = modulus; 
         bit++;
     }
-
 	// returns array address
     return binary;
 }
@@ -134,18 +125,3 @@ int rnd(void) {
 
 	return random;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
