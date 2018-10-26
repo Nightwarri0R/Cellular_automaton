@@ -1,10 +1,11 @@
 #include <stddef.h>
 
+#define OUT_OF_BOUNDS 101
 /* 
     Prints row[] contents 
     Row size needs to be the same length as the row array
 */
-void printRow(int row[], int rowSize);
+void paintRow(int row[], int rowSize);
 
 
 /*
@@ -48,3 +49,9 @@ int binaryToDecimal(int rule[]);
     Returns a random number
 */
 int rnd(void);
+
+
+void generate(int row[], int rowSize, int rule[]);
+
+
+void ruleInfomation(int rule[]);
