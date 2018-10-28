@@ -2,20 +2,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <stdbool.h>
 #include <string.h>
 #include "1dca.h"
-#include <stdbool.h>
-#include <ctype.h>
 
 #define MAX_GEN 250
 #define LENGTH 100
 
 int main(void) {
+	generateMenu();
+}
 
-	bool exit=true;
+void generateMenu(void) {
 	int decimalInput;
 	char choice;
-	char option;
 	int *rule;
 	int row[LENGTH];
 	int rowSize = LENGTH;
@@ -24,53 +24,111 @@ int main(void) {
 		row[i] = 0;
 
 	row[rowSize/2] = 1;
-
-	menuDisplay();
 	
 	do{
-			scanf("%c", &choice);
-	switch(choice){
-		case 'R': 
-		case 'r':
-			rule = decimalToBinary(rnd());
-			generate(row, rowSize, rule);
-			ruleInfomation(rule);
-			printf("Would you like to save those result on text file\n");
-			scanf("\n%c", &option);
-		if(option=='Y' || option== 'y'){
-			saveTotxt(row,rowSize);
-			printf("\nPaterns has been saved to a text file");
-		}else if(option=='N' || option=='n') {
-		 	printf("Patterns aren not saved");
+		menuDisplay();
+		scanf("%c", &choice);
+		switch(choice){
+			case 'R': 
+			case 'r':
+				rule = decimalToBinary(rnd());
+				generate(row, rowSize, rule);
+				ruleInfomation(rule);
+				saveRuleInfomation(rule); 
+				printf("Paterns has been saved to a text file");
+			break;
+			case 'U': 
+			case 'u':
+				printf("Enter the rule you wa to choose\n");
+				scanf("%d", &decimalInput);
+				rule =decimalToBinary(decimalInput);
+				generate(row, rowSize, rule);
+				ruleInfomation(rule);
+				saveRuleInfomation(rule); 		 		
+			break;
+			// case 'C': 
+			// break;
+			// case 'D':
+			// break;
+			case 'Q':
+				printf("Goodbye ^_^");
+				exit(0);
+			break;
+				default: 
+					printf("Please enter valid option!!!");
 		}
-	break;
-		case 'U': 
-		case 'u':
-			printf("Enter the rule you wa to choose\n");
-			scanf("%d", &decimalInput);
-			rule =decimalToBinary(userInput(decimalInput));
-			generate(row, rowSize, rule);
-			ruleInfomation(rule);
-		if(option=='Y' || option=='y'){
-			saveTotxt(row,rowSize);
-			printf("Paterns has been saved to a text file");
-		}else if(option=='N' || option=='n'){
-		 	printf("Patterns aren not saved");
+	}while(choice != 'q' || choice != 'Q');
+}
+
+void menuDisplay(){
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nWelcome to Cellular Automaton");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'R' to generate a random rule to be printed");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'U' for user defined rule to be printed");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'C' for Conways game of life option");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'D' for 3D cellular automaton");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'Q' to quit\n");
+}
+
+void generate(int row[], int rowSize, int rule[]) {
+
+	for (int i = 0; i < MAX_GEN; i++) {
+		paintRow(row, rowSize);
+		save(row,rowSize);
+		calculateNextRow(row, rule, rowSize);
+		printf("\n");
+	}
+}
+
+void ruleInfomation(int rule[]) {
+	printf("\n_____________________________________");
+	printf("\n                                        ");
+	printf("\nRule: %d", binaryToDecimal(rule));
+	printf("\n");
+	printf("2^n:     1  2  4  8 16 32 64 128");
+	printf("\n");
+	printf("Binary: ");
+	for (int i = 0; i < 8; i++) {
+		printf(" %d ", *(rule + i));
+	}
+	printf("\nGenerations: %d", MAX_GEN);
+	printf("\nRow Length: %d", LENGTH);
+	printf("\n_____________________________________");
+	printf("\n");
+}
+
+void save(int row[], int rowSize) {
+	FILE *f = fopen("cellular.txt", "a");
+	FILE *f1 = fopen("cellularNumbers.txt", "a");
+
+	if(f==NULL){
+		printf("\n File cannot be opened");
+	 	exit(1);
+	}
+	if(f1==NULL){
+		printf("\n File cannot be opened");
+	 	exit(1);
+	}
+
+	// prints a white block if the arr contains 1. blank for 0
+	for (int i=0; i<rowSize; i++){
+		if(row[i] == 1) {
+			fprintf(f, "\u2588");
+			fprintf(f1, "1");
+		}else{
+			fprintf(f," ");
+			fprintf(f1,"0");		
 		}
-	break;
-		case 'C': 
-	break;
-		case 'D':
-	break;
-		case 'Q':
-			exit=true;
-			printf("Goodbye ^_^");
-	 
-	break;
-	default:
-			printf("/nPlease neter valid option!!!");
-		}
-	}while(!exit);
+	}
+	fprintf(f,"\n");
+	fprintf(f1,"\n");
+	fclose(f);
+	fclose(f1);
 }
 
 int calculateCell(int lastRowLeft, int lastRowCentre, int lastRowRight, int rule[]) {
@@ -109,46 +167,14 @@ void paintRow(int row[], int rowSize) {
 		}
 	}
 }
+
+// int userInput(int usrInput){
+// 	if(isdigit(usrInput)==1){
+// 		return 1;
+// 	}else
 		
-
-void generate(int row[], int rowSize, int rule[]) {
-
-	for (int i = 0; i < MAX_GEN; i++) {
-		paintRow(row, rowSize);
-		calculateNextRow(row, rule, rowSize);
-		printf("\n");
-		
-
-	}
-
-
-
-}
-
-void ruleInfomation(int rule[]) {
-	printf("\n_____________________________________");
-	printf("\n                                        ");
-	printf("\nRule: %d", binaryToDecimal(rule));
-	printf("\n");
-	printf("2^n:     1  2  4  8 16 32 64 128");
-	printf("\n");
-	printf("Binary: ");
-	for (int i = 0; i < 8; i++) {
-		printf(" %d ", *(rule + i));
-	}
-	printf("\nGenerations: %d", MAX_GEN);
-	printf("\nRow Length: %d", LENGTH);
-	printf("\n_____________________________________");
-	printf("\n");
-}
-
-int userInput(int usrInput){
-	if(isdigit(usrInput)==1){
-		return 1;
-	}else
-		
-		return usrInput;
-}
+// 		return usrInput;
+// }
 
 int* decimalToBinary(int decimal) { 
     // initial array 
@@ -195,69 +221,40 @@ int rnd(void) {
 	return random;
 }
 
-void  saveTotxt(int row[], int rowSize) {
-
+void saveRuleInfomation(int rule[]) {
 	FILE *f = fopen("cellular.txt", "a");
 	FILE *f1 = fopen("cellularNumbers.txt", "a");
 
 	if(f==NULL){
-
 		printf("\n File cannot be opened");
-
 	 	exit(1);
 	}
 	if(f1==NULL){
-
 		printf("\n File cannot be opened");
-
 	 	exit(1);
-
 	}
 
-
-	// prints a white block if the arr contains 1. blank for 0
-	for (int i=0; i<rowSize; i++){
-
-		if(row[i] == 1) {
-
-			fprintf(f, "\u2588");
-
-			fprintf(f1, "1");
-		}else{
-
-			fprintf(f," ");
-
-			fprintf(f1,"0");
-			
-		}
+	fprintf(f, "\n                                        ");
+	fprintf(f, "\nRule: %d", binaryToDecimal(rule));
+	fprintf(f, "\n");
+	fprintf(f, "2^n:     1  2  4  8 16 32 64 128");
+	fprintf(f, "\n");
+	fprintf(f, "Binary: ");
+	for (int i = 0; i < 8; i++) {
+		fprintf(f, " %d ", *(rule + i));
 	}
+	fprintf(f, "\nGenerations: %d", MAX_GEN);
+	fprintf(f, "\nRow Length: %d", LENGTH);
+	fprintf(f, "\n_____________________________________________________________________________________________________________________________");
+	fprintf(f, "\n");
+
+	fprintf(f1, "Rule: %d", binaryToDecimal(rule));
+	fprintf(f1, "\n____________________________________________________________________________________________________________________________");
+
 	fprintf(f,"\n");
-
 	fprintf(f1,"\n");
-
 	fclose(f);
 	fclose(f1);
 }
-
-   void menuDisplay(){
-
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nWelcome to Cellular Automaton");
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nPress 'R' to generate a random rule to be printed");
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nPress 'U' for user defined rule to be printed");
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nPress 'C' for Conways game of life option");
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nPress 'D' for 3D cellular automaton");
-	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-	printf("\nPress 'Q' to quit\n");
-}
-
-
-
-		
-
 
 
