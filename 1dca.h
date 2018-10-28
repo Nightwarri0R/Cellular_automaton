@@ -1,6 +1,13 @@
+#pragma once
 #include <stddef.h>
 
 #define OUT_OF_BOUNDS 101
+
+
+
+void menuDisplay();
+
+
 /* 
     Prints row[] contents 
     Row size needs to be the same length as the row array
@@ -50,8 +57,21 @@ int binaryToDecimal(int rule[]);
 */
 int rnd(void);
 
+void generate(int row[], int rowSize, int rule[]);  
 
-void generate(int row[], int rowSize, int rule[]);
-
-
+/*
+    Displays the rule in decimal form, binary form, generation
+    and length of each generation
+*/
 void ruleInfomation(int rule[]);
+
+/*
+    Saves data to a txt file in binary and
+    in unicode. This is done by appending
+    the data row by row
+*/
+void save(int row[], int rowSize);
+
+void saveRuleInfomation(int rule[]);
+
+void generateMenu(void); 
