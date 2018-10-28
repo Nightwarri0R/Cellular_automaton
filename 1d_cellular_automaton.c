@@ -4,12 +4,18 @@
 #include <math.h>
 #include <string.h>
 #include "1dca.h"
+#include <stdbool.h>
+#include <ctype.h>
 
 #define MAX_GEN 250
 #define LENGTH 100
 
 int main(void) {
-	
+
+	bool exit=true;
+	int decimalInput;
+	char choice;
+	char option;
 	int *rule;
 	int row[LENGTH];
 	int rowSize = LENGTH;
@@ -19,12 +25,52 @@ int main(void) {
 
 	row[rowSize/2] = 1;
 
-	rule = decimalToBinary(rnd());
-	generate(row, rowSize, rule);
-	ruleInfomation(rule);
+	menuDisplay();
 	
-
-
+	do{
+			scanf("%c", &choice);
+	switch(choice){
+		case 'R': 
+		case 'r':
+			rule = decimalToBinary(rnd());
+			generate(row, rowSize, rule);
+			ruleInfomation(rule);
+			printf("Would you like to save those result on text file\n");
+			scanf("\n%c", &option);
+		if(option=='Y' || option== 'y'){
+			saveTotxt(row,rowSize);
+			printf("\nPaterns has been saved to a text file");
+		}else if(option=='N' || option=='n') {
+		 	printf("Patterns aren not saved");
+		}
+	break;
+		case 'U': 
+		case 'u':
+			printf("Enter the rule you wa to choose\n");
+			scanf("%d", &decimalInput);
+			rule =decimalToBinary(userInput(decimalInput));
+			generate(row, rowSize, rule);
+			ruleInfomation(rule);
+		if(option=='Y' || option=='y'){
+			saveTotxt(row,rowSize);
+			printf("Paterns has been saved to a text file");
+		}else if(option=='N' || option=='n'){
+		 	printf("Patterns aren not saved");
+		}
+	break;
+		case 'C': 
+	break;
+		case 'D':
+	break;
+		case 'Q':
+			exit=true;
+			printf("Goodbye ^_^");
+	 
+	break;
+	default:
+			printf("/nPlease neter valid option!!!");
+		}
+	}while(!exit);
 }
 
 int calculateCell(int lastRowLeft, int lastRowCentre, int lastRowRight, int rule[]) {
@@ -71,7 +117,7 @@ void generate(int row[], int rowSize, int rule[]) {
 		paintRow(row, rowSize);
 		calculateNextRow(row, rule, rowSize);
 		printf("\n");
-		saveTotxt(row,rowSize);
+		
 
 	}
 
@@ -94,6 +140,14 @@ void ruleInfomation(int rule[]) {
 	printf("\nRow Length: %d", LENGTH);
 	printf("\n_____________________________________");
 	printf("\n");
+}
+
+int userInput(int usrInput){
+	if(isdigit(usrInput)==1){
+		return 1;
+	}else
+		
+		return usrInput;
 }
 
 int* decimalToBinary(int decimal) { 
@@ -143,13 +197,23 @@ int rnd(void) {
 
 void  saveTotxt(int row[], int rowSize) {
 
-		FILE *f = fopen("cellular.txt", "a");
+	FILE *f = fopen("cellular.txt", "a");
+	FILE *f1 = fopen("cellularNumbers.txt", "a");
 
-			if(f==NULL){
-	printf("\n File cannot be opened");
+	if(f==NULL){
 
-	 exit(1);
+		printf("\n File cannot be opened");
+
+	 	exit(1);
 	}
+	if(f1==NULL){
+
+		printf("\n File cannot be opened");
+
+	 	exit(1);
+
+	}
+
 
 	// prints a white block if the arr contains 1. blank for 0
 	for (int i=0; i<rowSize; i++){
@@ -157,15 +221,42 @@ void  saveTotxt(int row[], int rowSize) {
 		if(row[i] == 1) {
 
 			fprintf(f, "\u2588");
-	}else{
+
+			fprintf(f1, "1");
+		}else{
 
 			fprintf(f," ");
+
+			fprintf(f1,"0");
 			
 		}
 	}
 	fprintf(f,"\n");
+
+	fprintf(f1,"\n");
+
 	fclose(f);
+	fclose(f1);
 }
+
+   void menuDisplay(){
+
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nWelcome to Cellular Automaton");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'R' to generate a random rule to be printed");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'U' for user defined rule to be printed");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'C' for Conways game of life option");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'D' for 3D cellular automaton");
+	printf("\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+	printf("\nPress 'Q' to quit\n");
+}
+
+
+
 		
 
 
