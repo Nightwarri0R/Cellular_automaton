@@ -1,34 +1,25 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
-#define COLS 20
-#define ROWS 20
+#define COLS 40
+#define ROWS 40
+#define MAX_GEN 10
 
 void check(int** gen);
 int** initGen(int row, int col);
 void printGen(int** gen);
+bool checkNeighbours(int neighbors, int** gen, int row, int col);
+void generate(int** gen);
+int** randomiseGen(int** gen);
 
 int main(void) {
-    int i = 0;
 
     int** currGen = initGen(ROWS, COLS);
-    currGen[ROWS/2][COLS/2] = 0;
-    currGen[(ROWS/2)+1][COLS/2] = 1;
-    currGen[(ROWS/2)-1][COLS/2] = 1;
-    currGen[(ROWS/2)+1][(COLS/2)-1] = 1;
-    // currGen[(ROWS/2)+1][(COLS/2)+1] = 1;
-    // // currGen[(ROWS/2)-1][(COLS/2)-1] = 1;
-    // // currGen[(ROWS/2)-1][(COLS/2)+1] = 1;
-    // // currGen[ROWS/2][(COLS/2)+1] = 1;
-    // // currGen[ROWS/2][(COLS/2)-1] = 1;
-
-    printGen(currGen);
-
-        check(currGen);
-        //printGen(currGen);
-        i++;
-    printf("\n");
+    int** initialise = randomiseGen(currGen);
+    printGen(initialise);
+    generate(initialise);
 
     return 0;
 }
@@ -37,9 +28,9 @@ void printGen(int** gen) {
     for (int i = 1; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
             if(gen[i][j] == 1)
-                printf(" # ");
+                printf("\u2588");
             else
-                printf(" . ");
+                printf(" ");
         }
         printf("\n");
     }
@@ -59,47 +50,72 @@ int** initGen(int row, int col) {
     return arr;
 }
 
+int** randomiseGen(int** gen) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++)
+            gen[i][j] = rand()%2;
+    }
+    return gen;
+}
+
 void check(int** gen) {
-    int neighbours = 0;
-    int** nextGenPtr; 
-
-    // generate the next generation array
-    nextGenPtr = initGen(ROWS, COLS);
-
+    
+    int** nextgen = initGen(ROWS, COLS); 
+    int neighbours;
     // outer double for loop searches the whole 2d array 
-    for (int row = 1; row < 19; row++) {
-        for (int col = 1; col < 19; col++) {
-            
+    for (int row = 1; row < ROWS-1; row++) {
+        for (int col = 1; col < COLS-1; col++) {
+            neighbours = 0;
             // each element found searches for elements around the element found
             for (int r = -1; r <= 1; r++) {
                 for (int c = -1; c <= 1; c++) {
-                    if ((r != 0 && c != 0) && gen[r+row][c+col] == 1)
-                        neighbours++; // if an alive cell is found then its a nieghbour
+                    if (gen[r+row][c+col] == 1)
+                        neighbours++; // if an alive cell is found then its a neighbour  
+                    //printf(" %d ", neighbours); 
                 }
             }
-
-            // if the element is 0 and the neighbors around 0 is equal to 3 then the element is born  
-            if (gen[row][col] == 0) {
-                if (neighbours == 3)
-                    nextGenPtr[row][col] = 1;
-            }
-            // if the element is 1
-            else if (gen[row][col] == 1) {
-                // if its neighbours are 2 or 3 the element lives on
-                if (neighbours == 2 || neighbours == 3)
-                    nextGenPtr[row][col] = 1;
-                // if there are fewer than 2 neighbours then the element dies
-                else if (neighbours < 2)
-                    nextGenPtr[row][col] = 0;
-                // if there are greater than 3 neighbours then the element dies
-                else if (neighbours > 3)
-                    nextGenPtr[row][col] = 0;
+            
+             if(checkNeighbours(neighbours, gen, row, col) == true)
+                    nextgen[row][col] = 1;
+                else
+                    nextgen[row][col] = 0;
             } 
         }
+
+            //memcpy(gen, nextgen, sizeof(*nextgen));
+
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++)
+            gen[i][j] = nextgen[i][j];
+    }
+}
+
+bool checkNeighbours(int neighbours, int** gen, int row, int col) {
+    if (gen[row][col] == 0) {
+        if (neighbours == 3)
+            return true;
+    }
+    else if (gen[row][col] == 1) {
+                // if its neighbours are 2 or 3 the element lives on
+        if (neighbours == 2 || neighbours == 3)
+            return true;   
+        else if (neighbours < 2) // if there are fewer than 2 neighbours then the element dies
+            return false;
+        else if (neighbours > 3) // if there are greater than 3 neighbours then the element dies
+            return false;
     }
 
-    printGen(nextGenPtr);
-    memcpy(nextGenPtr, gen, sizeof(int)*ROWS*COLS);
+    return false;
 }
+
+void generate(int** gen) {
+    for (int i = 0; i < MAX_GEN; i++) {
+        check(gen);
+        printGen(gen);
+        //check(gen);
+    }
+}
+
+
 
 
