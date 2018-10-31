@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
-#define COLS 100
-#define ROWS 100
-#define MAX_GEN 20
+#define COLS 30
+#define ROWS 30
+#define MAX_GEN 1000
 
 void check(int** gen);
 int** initGen(int row, int col);
@@ -21,6 +22,8 @@ int main(void) {
     printGen(initialise);
     generate(initialise);
 
+    free(currGen);
+
     return 0;
 }
 
@@ -28,6 +31,7 @@ void generate(int** gen) {
     for (int i = 0; i < MAX_GEN; i++) {
         check(gen);
         printGen(gen);
+        usleep(200000);
     }
 }
 
@@ -41,6 +45,7 @@ void printGen(int** gen) {
         }
         printf("\n");
     }
+    //printf("\n_________________________________________________________________________________________________________\n");
 }
 
 int** initGen(int row, int col) {
