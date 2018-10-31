@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define COLS 40
-#define ROWS 40
-#define MAX_GEN 10
+#define COLS 100
+#define ROWS 100
+#define MAX_GEN 20
 
 void check(int** gen);
 int** initGen(int row, int col);
@@ -22,6 +22,13 @@ int main(void) {
     generate(initialise);
 
     return 0;
+}
+
+void generate(int** gen) {
+    for (int i = 0; i < MAX_GEN; i++) {
+        check(gen);
+        printGen(gen);
+    }
 }
 
 void printGen(int** gen) {
@@ -106,14 +113,6 @@ bool checkNeighbours(int neighbours, int** gen, int row, int col) {
     }
 
     return false;
-}
-
-void generate(int** gen) {
-    for (int i = 0; i < MAX_GEN; i++) {
-        check(gen);
-        printGen(gen);
-        //check(gen);
-    }
 }
 
 
