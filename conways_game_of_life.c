@@ -7,16 +7,21 @@
 
 #define COLS 100
 #define ROWS 100
-#define MAX_GEN 1000
+
+#define clear() printf("\033[H\033[J")
 
 int generateNextGen(int** gen);
 int** initGen(int row, int col);
 void printGen(int** gen);
 bool checkNeighbours(int neighbors, int** gen, int row, int col);
 void generateConways(int** gen, int max);
-int randomiseGen(int** gen);
+int randomiseGen(int** gen); 
 void runConways();
 
+int main(){
+    runConways();
+    return 0;
+}
 
 void runConways() {
    //char input;
@@ -37,7 +42,8 @@ void generateConways(int** gen, int max) {
     for (int i = 0; i < max; i++) {
         generateNextGen(gen);  // generate the next generation
         printGen(gen); // print to the screen
-        usleep(200500); // suspends execution in microseconds (gives a stop motion effect)
+        usleep(200000); // suspends execution in microseconds (gives a stop motion effect)
+        
     }
 }
 
@@ -81,6 +87,7 @@ int randomiseGen(int** gen) {
 }
 
 int generateNextGen(int** gen) {
+    clear();
     int** nextgen = initGen(ROWS, COLS); // initialise the next gen 
     int neighbours;
 
