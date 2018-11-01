@@ -3,31 +3,38 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include "errors.h"
 
 #define COLS 100
 #define ROWS 100
 #define MAX_GEN 1000
 
-void generateNextGen(int** gen);
+int generateNextGen(int** gen);
 int** initGen(int row, int col);
 void printGen(int** gen);
 bool checkNeighbours(int neighbors, int** gen, int row, int col);
-void generate(int** gen);
-int** randomiseGen(int** gen);
+void generateConways(int** gen, int max);
+int randomiseGen(int** gen);
+void runConways();
 
-int main(void) {
 
+void runConways() {
+   //char input;
+    int inputMax;
+
+    printf("Note: give the generation of Conway's game of life a minute to take shape");
+    printf("\nEnter the number of generations you want to simulate: ");
+    scanf("%d", &inputMax);
+
+    printf("Starting...");
     int** firstGen = initGen(ROWS, COLS); // initialise the firstGen to 0's
-    int** initialise = randomiseGen(firstGen); // randomise firstGen with 1's and 0's
-    generate(initialise); // generate for n number of times defined by the MAX_GEN
-
+    randomiseGen(firstGen); // randomise firstGen with 1's and 0's
+    generateConways(firstGen, inputMax); // generate for n number of times defined by the MAX_GEN
     free(firstGen); // free the memory once done
-
-    return 0;
 }
 
-void generate(int** gen) {
-    for (int i = 0; i < MAX_GEN; i++) {
+void generateConways(int** gen, int max) {
+    for (int i = 0; i < max; i++) {
         generateNextGen(gen);  // generate the next generation
         printGen(gen); // print to the screen
         usleep(200500); // suspends execution in microseconds (gives a stop motion effect)
@@ -48,7 +55,7 @@ void printGen(int** gen) {
 
 int** initGen(int row, int col) {
     int **arr = malloc(row*sizeof(int*)); // allocate memory for a 2D array
-
+    
     for (int i = 0; i < row; i++)
         arr[i] = malloc(sizeof(int)*col); // allocate memory for each sub array
 
@@ -60,17 +67,29 @@ int** initGen(int row, int col) {
     return arr;
 }
 
-int** randomiseGen(int** gen) {
+int randomiseGen(int** gen) {
+    if (*gen == NULL)
+        return NULL_PARAM;
+
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++)
             gen[i][j] = rand()%2; // random number mod 2 is ethier a 0 or a 1
     }
-    return gen; // 2D array is returned which will be the 1st gen
+     // 2D array is returned which will be the 1st gen
+
+    return SUCCESS;
 }
 
-void generateNextGen(int** gen) {
+int generateNextGen(int** gen) {
     int** nextgen = initGen(ROWS, COLS); // initialise the next gen 
     int neighbours;
+
+    if (*nextgen == NULL)
+        return NULL_PARAM;
+
+    if (*gen == NULL)
+        return NULL_PARAM;
+    
     // outer double for loop searches the whole 2d array 
     for (int row = 1; row < ROWS-1; row++) {
         for (int col = 1; col < COLS-1; col++) {
@@ -101,6 +120,8 @@ void generateNextGen(int** gen) {
             gen[i][j] = nextgen[i][j];
     }
     free(nextgen); // free nextGen memory after being copied to gen
+
+    return SUCCESS;
 }
 
 bool checkNeighbours(int neighbours, int** gen, int row, int col) {
